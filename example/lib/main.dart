@@ -220,11 +220,6 @@ class _ReadView extends StatelessWidget with HealthKitReporterMixin {
             child: Text('correlations')),
         TextButton(
             onPressed: () {
-              queryElectrocardiograms();
-            },
-            child: Text('electrocardiograms')),
-        TextButton(
-            onPressed: () {
               queryActivitySummary();
             },
             child: Text('activitySummary')),
@@ -343,18 +338,6 @@ class _ReadView extends StatelessWidget with HealthKitReporterMixin {
       final activitySummary =
           await HealthKitReporter.queryActivitySummary(predicate);
       print('activitySummary: ${activitySummary.map((e) => e.map).toList()}');
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  void queryElectrocardiograms() async {
-    try {
-      final electrocardiograms = await HealthKitReporter.electrocardiogramQuery(
-          predicate,
-          withVoltageMeasurements: true);
-      print(
-          'electrocardiograms: ${electrocardiograms.map((e) => e.map).toList()}');
     } catch (e) {
       print(e);
     }

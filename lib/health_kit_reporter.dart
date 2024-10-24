@@ -12,7 +12,6 @@ import 'model/payload/correlation.dart';
 import 'model/payload/date_components.dart';
 import 'model/payload/deleted_object.dart';
 import 'model/payload/device.dart';
-import 'model/payload/electrocardiogram.dart';
 import 'model/payload/heartbeat_series.dart';
 import 'model/payload/preferred_unit.dart';
 import 'model/payload/quantity.dart';
@@ -406,27 +405,6 @@ class HealthKitReporter {
       workouts.add(workout);
     }
     return workouts;
-  }
-
-  /// Returns [Electrocardiogram] samples for the provided
-  /// time interval predicate [predicate].
-  ///
-  static Future<List<Electrocardiogram>> electrocardiogramQuery(
-      Predicate predicate,
-      {bool withVoltageMeasurements = false}) async {
-    final arguments = <String, dynamic>{
-      'withVoltageMeasurements': withVoltageMeasurements,
-    };
-    arguments.addAll(predicate.map);
-    final result =
-        await _methodChannel.invokeMethod('electrocardiogramQuery', arguments);
-    final List<dynamic> list = jsonDecode(result);
-    final electrocardiograms = <Electrocardiogram>[];
-    for (final Map<String, dynamic> map in list) {
-      final electrocardiogram = Electrocardiogram.fromJson(map);
-      electrocardiograms.add(electrocardiogram);
-    }
-    return electrocardiograms;
   }
 
   /// Returns [Sample] samples for the provided [identifier] and the

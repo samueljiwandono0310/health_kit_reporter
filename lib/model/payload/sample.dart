@@ -8,7 +8,6 @@ import '../type/workout_type.dart';
 import 'category.dart';
 import 'correlation.dart';
 import 'device.dart';
-import 'electrocardiogram.dart';
 import 'quantity.dart';
 import 'source_revision.dart';
 import 'workout.dart';
@@ -107,11 +106,6 @@ abstract class Sample<Harmonized> {
     final correlationType = CorrelationTypeFactory.tryFrom(identifier);
     if (correlationType != null) {
       return Correlation.fromJson(json);
-    }
-    final electrocardiogramType =
-        ElectrocardiogramTypeFactory.tryFrom(identifier);
-    if (electrocardiogramType != null) {
-      return Electrocardiogram.fromJson(json);
     }
     return null;
   }

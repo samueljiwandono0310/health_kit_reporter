@@ -19,7 +19,6 @@ extension SwiftHealthKitReporterPlugin {
         case quantityQuery
         case categoryQuery
         case workoutQuery
-        case electrocardiogramQuery
         case sampleQuery
         case statisticsQuery
         case heartbeatSeriesQuery
@@ -118,16 +117,6 @@ extension SwiftHealthKitReporterPlugin {
                 return
             }
             workoutQuery(
-                reporter: reporter,
-                arguments: arguments,
-                result: result
-            )
-        case .electrocardiogramQuery:
-            guard let arguments = call.arguments as? [String: Any] else {
-                throwNoArgumentsError(result: result)
-                return
-            }
-            electrocardiogramQuery(
                 reporter: reporter,
                 arguments: arguments,
                 result: result
@@ -552,71 +541,6 @@ extension SwiftHealthKitReporterPlugin {
                     code: className,
                     message: "Error in workoutQuery initialization",
                     details: error
-                )
-            )
-        }
-    }
-    private func electrocardiogramQuery(
-        reporter: HealthKitReporter,
-        arguments: [String: Any],
-        result: @escaping FlutterResult
-    ) {
-        guard
-            let startTimestamp = arguments["startTimestamp"] as? Double,
-            let endTimestamp = arguments["endTimestamp"] as? Double,
-            let withVoltageMeasurements = arguments["withVoltageMeasurements"] as? Bool
-        else {
-            throwParsingArgumentsError(result: result, arguments: arguments)
-            return
-        }
-        let predicate = NSPredicate.samplesPredicate(
-            startDate: Date.make(from: startTimestamp),
-            endDate: Date.make(from: endTimestamp)
-        )
-        if #available(iOS 14.0, *) {
-            do {
-                let query = try reporter.reader.electrocardiogramQuery(
-                    predicate: predicate,
-                    withVoltageMeasurements: withVoltageMeasurements
-                ) { (electrocardiograms, error) in
-                    guard error == nil else {
-                        result(
-                            FlutterError(
-                                code: "ElectrocardiogramQuery",
-                                message: "Error in electrocardiogramQuery",
-                                details: error.debugDescription
-                            )
-                        )
-                        return
-                    }
-                    do {
-                        result(try electrocardiograms.encoded())
-                    } catch {
-                        result(
-                            FlutterError(
-                                code: "ElectrocardiogramQuery",
-                                message: "Error in json encoding of electrocardiograms: \(electrocardiograms)",
-                                details: error
-                            )
-                        )
-                    }
-                }
-                reporter.manager.executeQuery(query)
-            } catch {
-                result(
-                    FlutterError(
-                        code: className,
-                        message: "Error electrocardiograms query initialization",
-                        details: error
-                    )
-                )
-            }
-        } else {
-            result(
-                FlutterError(
-                    code: className,
-                    message: "Error in platform version.",
-                    details: "Electrocardiogram query is available for iOS 14."
                 )
             )
         }
